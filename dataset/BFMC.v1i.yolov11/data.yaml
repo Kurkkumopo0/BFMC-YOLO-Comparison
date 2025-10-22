@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 12
+names: ['car', 'crosswalk', 'highway_entry', 'highway_exit', 'no_entry', 'onewayroad', 'parking', 'pedestrian', 'priority', 'roadblock', 'stop', 'trafficlight']
+
+roboflow:
+  workspace: ml-e61nz
+  project: bfmc-ynwep-mwxwy
+  version: 1
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/ml-e61nz/bfmc-ynwep-mwxwy/dataset/1
