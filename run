@@ -1,0 +1,95 @@
+#!/bin/bash
+
+ENV_NAME="BFMC_env"
+YAML_FILE="environment.yaml"
+
+MODELS=("yolo11n.pt" "yolo11s.pt" "yolo8n.pt" "yolo8s.pt")
+DATASETS=("BFMC.v1i.yolov11" "BFMC.v2i.yolov11")
+
+_check_conda() {
+    if ! command -v conda &> /dev/null
+    then
+        echo "Error: Conda is not installed or initialized"
+        exit 1
+    fi
+}
+
+_select_option() {
+    local -n arr=$1
+    local prompt=$2
+    local selection
+
+    echo -e "\n${prompt}" >&2
+
+    for i in "${!arr[@]}"; do
+        echo "$((i+1)). ${arr[$i]}" >&2
+    done
+
+    while true; do
+        read -r -p "Select option (1-${#arr[@]}): " selection >&2
+        if [[ "$selection" =~ ^[0-9]+$ ]] && (( selection >= 1 )) && (( selection <= ${#arr[@]} )); then
+            echo "${arr[selection-1]}"
+            return 0
+        else
+            echo "Invalid selection. Please enter a number between 1 and ${#arr[@]}." >&2
+        fi
+    done
+}
+
+help() {
+    cat << EOF
+Usage: ./run <command> [options]
+
+Commands:
+    init                    Create conda environment
+    train [options]         Start training
+
+Training Options:
+    -e, --epochs <n>        Number of epochs
+    -b, --batch <n>         Batch size
+EOF
+}
+
+init() {
+    echo "Starting setup..."
+    _check_conda
+    conda env create -f "${YAML_FILE}" || { 
+        echo "Error: Failed to create Conda environment."
+        exit 1
+    }
+    echo "Setup Complete."
+}
+
+train() {
+    echo "Starting training..."
+    _check_conda
+
+    EXTRA_ARGS=("$@") # lazy way but works
+
+    MODEL=$(_select_option MODELS "Select model")
+    DATASET=$(_select_option DATASETS "Select dataset")
+    DATA_PATH="dataset/${DATASET}/data.yaml"
+
+    echo ""
+    read -r -p "Enter Run Name: " RUN_NAME
+    echo -e "\nExecuting train.py..."
+
+    conda run --no-capture-output -n "${ENV_NAME}" python -u python/train.py \
+        -m "${MODEL}" \
+        -d "${DATA_PATH}" \
+        -n "${RUN_NAME}" \
+        "${EXTRA_ARGS[@]}" || {
+            echo "Error: Training failed."
+            exit 1
+        }
+}
+
+if [ "$1" == "init" ]; then
+    init
+elif [ "$1" == "train" ]; then
+    shift
+    train "$@"
+else
+    help
+fi
+

@@ -7,13 +7,13 @@ import math
 from ultralytics import YOLO
 
 
-def train(model, data, epochs, name):
+def train(model, data, epochs, name, batch):
     model = YOLO(model)
     results = model.train(
         data=data,
         epochs=epochs,
         name=name,
-        batch=12, # RAM bottleneck on my machine
+        batch=batch,
     )
     return results
 
@@ -97,9 +97,9 @@ def summarize(model, epochs, results):
             f.write(f"{class_idx:<10} {class_name:<20} {instances:<10} {p:<10.3f} {r:<10.3f} {mAP50:<10.3f} {mAP95:<10.3f}\n")
 
 
-def main(model, data, epochs, name):
+def main(model, data, epochs, name, batch):
     try:
-        results = train(model, data, epochs, name)
+        results = train(model, data, epochs, name, batch)
         summarize(model, epochs, results)
     except Exception as e:
         print(f"An error occurred: {e}")
@@ -109,14 +109,16 @@ def main(model, data, epochs, name):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Run YOLO training with different models.')
     parser.add_argument('-m', '--model', type=str, required=True,
-                        help='Path to the data.yml file')
+                        help='Name of the yolo model.')
     parser.add_argument('-d', '--data', type=str, required=True,
-                        help='Name for the training run')
-    parser.add_argument('-e', '--epochs', type=int, default=50,
-                        help='Number of training epochs.')
+                        help='Path to the data.yml.')
+    parser.add_argument('-e', '--epochs', type=int, default=40,
+                        help='Number of training epochs. Default is 40.')
+    parser.add_argument('-b', '--batch', type=int, default=-1,
+                        help='Batch size used in training. Default is -1 (auto).')
     parser.add_argument('-n', '--name', type=str, required=True,
                         help='Name for the training run')
     args = parser.parse_args()
 
-    main(args.model, args.data, args.epochs, args.name)
+    main(args.model, args.data, args.epochs, args.name, args.batch)
 

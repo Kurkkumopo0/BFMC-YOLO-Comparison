@@ -1,0 +1,17 @@
+name: BFMC_env
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+dependencies:
+  - python=3.12
+  - pytorch=2.5
+  - torchvision
+  - pytorch-cuda=12.4
+  - pip
+  - numpy
+  - pandas
+
+  - pip:
+    - ultralytics
+    - psutil
