@@ -1,0 +1,39 @@
+runs\detect\y11nano80\weights\last.pt TRAINING SUMMARY
+
+SYSTEM SPECS
+CPU: AMD64 Family 23 Model 8 Stepping 2, AuthenticAMD (16 cores)
+RAM: 31.94 GB total
+GPU: NVIDIA GeForce GTX 1080
+
+DETAILS
+Total Epochs Completed: 80
+Total Training Time: 5h, 56m, 26s
+Average Time Per Epoch: 4m, 35s
+
+INFERENCE SPEED
+preprocess: 1.0731ms
+inference: 3.6652ms
+loss: 0.0007ms
+postprocess: 1.1563ms
+
+RESULTS
+mAP95: 0.621
+mAP50: 0.983
+Precision: 0.964
+Recall: 0.995
+Fitness: 0.621
+
+CLASS-WISE PERFORMANCE
+Class      Name                 Instances  P          R          mAP50      mAP95     
+0          car                  51         0.916      1.000      0.990      0.773     
+1          crosswalk            28         0.984      1.000      0.995      0.583     
+2          highway_entry        30         0.962      1.000      0.995      0.565     
+3          highway_exit         50         0.990      1.000      0.995      0.602     
+4          no_entry             46         0.991      1.000      0.995      0.565     
+5          onewayroad           79         0.904      0.956      0.950      0.493     
+6          parking              83         0.980      0.988      0.989      0.583     
+7          pedestrian           78         0.974      1.000      0.995      0.713     
+8          priority             40         0.990      1.000      0.995      0.666     
+9          roadblock            155        0.895      1.000      0.904      0.625     
+10         stop                 73         0.995      1.000      0.995      0.594     
+11         trafficlight         53         0.991      1.000      0.995      0.691     

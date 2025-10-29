@@ -3,7 +3,7 @@
 ENV_NAME="BFMC_env"
 YAML_FILE="environment.yaml"
 
-MODELS=("yolo11n.pt" "yolo11s.pt" "yolo8n.pt" "yolo8s.pt")
+MODELS=("yolo11n.pt" "yolo11s.pt" "yolov8n.pt" "yolov8s.pt")
 DATASETS=("BFMC.v1i.yolov11" "BFMC.v2i.yolov11")
 
 _check_conda() {
@@ -41,12 +41,17 @@ help() {
 Usage: ./run <command> [options]
 
 Commands:
-    init                    Create conda environment
-    train [options]         Start training
+    init                    Create conda environment.
+    train [options]         Start training.
+    resume [options]        Resume interrupted training.
 
 Training Options:
-    -e, --epochs <n>        Number of epochs
-    -b, --batch <n>         Batch size
+    -e, --epochs <NUM>      Number of epochs.
+    -b, --batch <SIZE>      Batch size.
+
+Resume Options:
+    -p, --path <FILE>       Full path to the model checkpoint to resume from.
+    -n, --name <NAME>       Name of the run folder to resume from. Only used if -p/--path is omitted.
 EOF
 }
 
@@ -84,11 +89,27 @@ train() {
         }
 }
 
+resume() {
+    echo "Resuming training..."
+    _check_conda
+
+    ARGS=("$@") 
+
+    conda run --no-capture-output -n "${ENV_NAME}" python -u python/resume.py \
+        "${ARGS[@]}" || {
+            echo "Error: Training failed."
+            exit 1
+        }
+}
+
 if [ "$1" == "init" ]; then
     init
 elif [ "$1" == "train" ]; then
     shift
     train "$@"
+elif [ "$1" == "resume" ]; then
+    shift
+    resume "$@"
 else
     help
 fi
